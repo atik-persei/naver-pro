@@ -53,7 +53,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         contentTOC: resolve(pagesDir, 'content', 'toc', 'index.ts'),
-        background: resolve(pagesDir, 'background', 'index.ts'),
+        background: resolve(pagesDir, 'background', 'toc', 'index.ts'),
         contentStyle: resolve(pagesDir, 'content', 'style.scss'),
       },
       output: {
