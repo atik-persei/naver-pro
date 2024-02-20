@@ -28,8 +28,9 @@ const manifest = {
   ],
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      matches: ['http://blog.naver.com/*', 'https://blog.naver.com/*'],
       js: ['src/pages/contentTOC/index.js'],
+      css: ["assets/css/contentStyle<KEY>.chunk.css"]
     },
   ],
   web_accessible_resources: [
