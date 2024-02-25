@@ -1,65 +1,112 @@
 import { useEffect, useState } from 'react';
 
 export default function App() {
+  // toc 분류 데이터
   const [criterionObject, setCriterionObject] = useState(null);
 
+  // 페이지 이동 시 조회
   useEffect(() => {
-    tocElementController('init')
-
-    // 페이지 이동 시 조회
     document.querySelector('#mainFrame').addEventListener('load', fetchCriterionObject);
   }, []);
 
+  // toc 분류 데이터 업데이트 시 동작
   useEffect(() => {
+    // toc 분류 데이터 존재 유무 확인
     if (criterionObject == null) { return; }
 
+    // iframe 블로그 본문 조회
     const iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement
     const iframeContent = iframeElement.contentDocument || iframeElement.contentWindow.document
-    const titleElements = iframeContent.querySelectorAll(criterionObject.toc)
-    console.log(titleElements)
 
+    // toc 제목 조회
+    const titleElements = iframeContent.querySelectorAll(criterionObject.toc)
+
+    // toc 업데이트
     tocElementController('update', titleElements)
-    tocElementController('mount', titleElements)
   }, [criterionObject])
 
-
   function tocElementController(type, titleElements?) {
+    const mainFrame = document.querySelector('#mainFrame');
+
     switch (type) {
       case 'init':
-        const tocElement = document.createElement('div');
-        tocElement.classList.add('tocElement');
-        document.querySelector('body').appendChild(tocElement);
+        if (mainFrame instanceof HTMLIFrameElement) {
+          // iframe 내부의 document 조회
+          const iframeDocument = mainFrame.contentDocument || mainFrame.contentWindow.document;
+
+          // link 요소 생성 및 확장프로그램의 로컬 CSS 파일 추가
+          var linkElement = iframeDocument.createElement('link');
+          linkElement.rel = 'stylesheet';
+          linkElement.type = 'text/css';
+          linkElement.href = chrome.runtime.getURL('/assets/css/tocStyle.css');
+
+          // head에 link 요소 추가
+          iframeDocument.head.insertBefore(linkElement, iframeDocument.head.children[0]);
+
+          // 게시글 요소 조회
+          const documentBodyElement = iframeDocument.querySelector('.se-viewer');
+
+          // 자식 요소 생성 및 추가
+          const createTocElement = document.createElement('div');
+          createTocElement.classList.add('tocElement', 'se-component-content');
+
+          // 제목과 본문 사이에 요소 추가
+          documentBodyElement.insertBefore(createTocElement, documentBodyElement.children[1]);
+        }
         break;
       case 'update':
-        [...titleElements].map((titleElement) => {
-          const spanElement = document.createElement('span')
-          spanElement.classList.add('tocTitle')
-          spanElement.innerText = titleElement.querySelector('.se-quote').innerText
-          const tocElement = document.querySelector('.tocElement');
-          tocElement.appendChild(spanElement)
-        })
+        if (mainFrame instanceof HTMLIFrameElement) {
+          // iframe 내부의 document 조회
+          const iframeDocument = mainFrame.contentDocument || mainFrame.contentWindow.document;
+
+          // toc 요소 조회
+          const tocElement = iframeDocument.querySelector('.tocElement');
+
+          // 인자 검사
+          if (!titleElements) { return }
+
+          // 목차 요소 추가
+          if ([...titleElements].length == 0) {
+            // 검색된 목차가 없을 경우
+            const spanElement = document.createElement('p')
+            spanElement.classList.add('tocTitle')
+            spanElement.innerText = '목차가 없습니다.'
+            tocElement.appendChild(spanElement)
+          } else {
+            // 검색된 목차가 있을 때
+            [...titleElements].map((titleElement) => {
+              const spanElement = document.createElement('span')
+              spanElement.classList.add('tocTitle')
+              spanElement.innerText = '• ' + titleElement.querySelector('.se-quote').innerText
+              spanElement.addEventListener('click', () => clickHandler(titleElement));
+
+              tocElement.appendChild(spanElement)
+            })
+          }
+        }
         break;
-      case 'mount':
-        document.querySelectorAll('.tocTitle').forEach((element) => {
-          element.addEventListener('click', clickHandler);
-        });
-        break;
-      case 'unmount':
-        document.querySelectorAll('.tocTitle').forEach((element) => {
-          element.removeEventListener('click', clickHandler);
-        });
     }
   }
 
-  function clickHandler(event) {
-    const iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement
+  function clickHandler(titleElement) {
+    // iframe 내부의 document 조회
+    const iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement;
 
-    const elementRect = event.target;
-    iframeElement.scrollIntoView({ behavior: 'smooth' });
+    // 클릭한 엘리먼트의 위치 정보를 가져옵니다.
+    const clickedElementRect = titleElement.getBoundingClientRect();
+
+    // iframe 내의 엘리먼트를 찾아서 해당 엘리먼트의 위치로 스크롤합니다. (네이버 해더 제외)
+    iframeElement.contentWindow.scrollTo({
+      top: iframeElement.contentWindow.scrollY + clickedElementRect.top - 58,
+      behavior: 'smooth'
+    });
   }
 
 
   async function fetchCriterionObject() {
+    // TOC 인터페이스 생성
+    tocElementController('init')
+
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action: 'getCriterionObject' }, function (response) {
         if (chrome.runtime.lastError) {
