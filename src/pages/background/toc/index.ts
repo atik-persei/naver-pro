@@ -10,7 +10,7 @@ chrome.runtime.onMessage.addListener(
     if (request.action === 'getCriterionObject') {
       // fetchData 함수를 Promise로 감싸기
       async function fetchCriterionObject() {
-        const response = await fetch(`https://firebasestorage.googleapis.com/v0/b/naver-pro-9fe19.appspot.com/o/data.json?alt=media&token=00772c78-1c96-435d-bfb1-57444510b9e7`);
+        const response = await fetch(`https://rbxgrbhozxbbhloyrv54gcgkci0xmagq.lambda-url.ap-northeast-2.on.aws`);
         const result = await response.json();
         return result;
       }
