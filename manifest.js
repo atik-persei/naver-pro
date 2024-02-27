@@ -24,13 +24,12 @@ const manifest = {
     128: 'icon-128.png',
   },
   host_permissions: [
-    "https://firebasestorage.googleapis.com/"
+    "https://rbxgrbhozxbbhloyrv54gcgkci0xmagq.lambda-url.ap-northeast-2.on.aws/"
   ],
   content_scripts: [
     {
       matches: ['http://blog.naver.com/*', 'https://blog.naver.com/*'],
       js: ['src/pages/contentTOC/index.js'],
-      css: ["assets/css/contentStyle<KEY>.chunk.css"]
     },
   ],
   web_accessible_resources: [
