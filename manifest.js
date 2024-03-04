@@ -7,7 +7,7 @@ const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
  */
 const manifest = {
   manifest_version: 3,
-  default_locale: 'en',
+  default_locale: 'ko',
   /**
    * if you want to support multiple languages, you can use the following reference
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
@@ -16,6 +16,10 @@ const manifest = {
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
   permissions: ['storage'],
+  action: {
+    default_popup: 'src/pages/popup/index.html',
+    default_icon: 'icon-128.png',
+  },
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',
@@ -24,7 +28,7 @@ const manifest = {
     128: 'icon-128.png',
   },
   host_permissions: [
-    "https://rbxgrbhozxbbhloyrv54gcgkci0xmagq.lambda-url.ap-northeast-2.on.aws/"
+    "https://aiaczbgnw7e3ek2jccxg23moo40mltvm.lambda-url.ap-northeast-2.on.aws/"
   ],
   content_scripts: [
     {

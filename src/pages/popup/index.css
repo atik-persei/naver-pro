@@ -1,0 +1,46 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 10px;
+}
+
+.App {
+    width: 300px;
+}
+
+.header {
+    height: 20px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #FFFFFF;
+    font-size: 1.6rem;
+    font-weight: bold;
+    background-color: #03C75A;
+}
+
+.body {
+    padding: 10px;
+}
+
+.option {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 1.2rem;
+}
+
+
+.icon {
+    display: flex;
+    gap: 8px;
+}
+.icon img {
+    height: 20px;
+    width: 20px;
+    display: block;
+}
