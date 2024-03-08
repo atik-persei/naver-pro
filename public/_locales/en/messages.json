@@ -1,0 +1,10 @@
+{
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "The Naver Pro extension adds various features to the Naver platform."
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "Naver Pro"
+  }
+}

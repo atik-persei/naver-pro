@@ -1,0 +1,22 @@
+.tocElement {
+    border: 1px solid #a2a9b1 !important;
+    border-spacing: 3px !important;
+    background-color: #f8f9fa !important;
+    clear: right;
+
+    margin: 40px !important;
+    padding: 10px !important;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tocElement span {
+    cursor: pointer;
+    color: #3366cc;
+}
+
+.tocElement span:hover {
+    text-decoration: underline;
+}

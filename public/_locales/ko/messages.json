@@ -1,0 +1,10 @@
+{
+  "extensionDescription": {
+    "description": "Extension description",
+    "message": "네이버 프로 확장프로그램은 네이버 플랫폼에 다양한 기능을 추가합니다."
+  },
+  "extensionName": {
+    "description": "Extension name",
+    "message": "네이버 프로"
+  }
+}
