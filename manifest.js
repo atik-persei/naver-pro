@@ -28,7 +28,7 @@ const manifest = {
     128: 'icon-128.png',
   },
   host_permissions: [
-    "https://aiaczbgnw7e3ek2jccxg23moo40mltvm.lambda-url.ap-northeast-2.on.aws/"
+    'https://aiaczbgnw7e3ek2jccxg23moo40mltvm.lambda-url.ap-northeast-2.on.aws/'
   ],
   content_scripts: [
     {
