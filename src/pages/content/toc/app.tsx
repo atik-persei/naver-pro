@@ -89,10 +89,11 @@ export default function App() {
     if (!configManager.Toc) {
       return
     }
+    let blogID = ''
 
     setCriterionObject('loading')
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ action: 'getCriterionObject' }, function (response) {
+      chrome.runtime.sendMessage({ action: 'getCriterionObject' }, async function (response) {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
           return;
@@ -112,13 +113,15 @@ export default function App() {
           const urlParams = new URLSearchParams(window.location.search);
 
           // 블로그 아이디 조회
-          setBlogID(urlParams.get('blogId'));
+          blogID = urlParams.get('blogId');
         }
 
         if (pageStructure == 'iframe') {
-          setBlogID(window.location.pathname.split('/')[1]);
+          // 블로그 아이디 조회
+          blogID = window.location.pathname.split('/')[1];
         }
 
+        // 블로그 설정 데이터 유무
         const isSpecifiedBlog = criterionObjectData.result.find(criterionObject => criterionObject.url === blogID) ? true : false;
 
         // 해당 블로그 설정이 있다면 데이터 반환
