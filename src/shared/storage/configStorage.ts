@@ -1,22 +1,25 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storage/base';
 
+type TocDefaultTag = 'blockquote'
+
 type ConfigStorage = BaseStorage<Config> & {
-  toggle: (type: string) => Promise<void>;
+  update: (type: string) => Promise<void>;
 };
 
 type Config = {
   Toc: boolean
+  TocDeafultTag: TocDefaultTag;
   TocGlobalApplicationScope: boolean;
 };
 
-const storage = createStorage<Config>('config', { Toc: true, TocGlobalApplicationScope: false }, {
+const storage = createStorage<Config>('config', { Toc: true, TocDeafultTag: 'blockquote', TocGlobalApplicationScope: false }, {
   storageType: StorageType.Local,
   liveUpdate: true,
 });
 
 const configStorage: ConfigStorage = {
   ...storage,
-  toggle: async (type) => {
+  update: async (type) => {
     if (type == 'toc') {
       await storage.set((currentConfig) => ({
         ...currentConfig,

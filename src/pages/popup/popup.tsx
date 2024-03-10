@@ -8,7 +8,7 @@ const Popup = () => {
   const configManager = useStorage(configStorage);
 
   const handleUpdateConfig = async (event) => {
-    await configStorage.toggle(event.target.id)
+    await configStorage.update(event.target.id);
   };
 
   return (
@@ -27,6 +27,17 @@ const Popup = () => {
       </div>
 
       <div className='body'>
+        <div className='option'>
+          <label>목차 기준 값</label>
+          <select
+            id='toc-criterion-object'
+            onChange={handleUpdateConfig}>
+            <option defaultChecked={true} value='blockquote'>blockquote</option>
+          </select>
+        </div>
+
+        <br />
+
         <div className='option'>
           <input
             id='toc'
