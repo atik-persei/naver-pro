@@ -78,7 +78,7 @@ export default function App() {
 
       // 정규 표현식을 사용하여 단어 사이의 공백만 제거하고 길이를 계산
       const textWithoutExtraSpaces = element?.textContent.replace(' ', '').trim();
-      return textWithoutExtraSpaces.length <= 200;
+      return textWithoutExtraSpaces.length > 0 && textWithoutExtraSpaces.length <= 200 && textWithoutExtraSpaces != '​';
     });
 
     // toc 업데이트
@@ -121,7 +121,7 @@ export default function App() {
           // 블로그 아이디 조회
           blogID = window.location.pathname.split('/')[1];
         }
-        
+
         // 블로그 아이디 저장
         setBlogID(blogID)
 
@@ -210,7 +210,14 @@ export default function App() {
       titleElements.map((titleElement) => {
         const spanElement = document.createElement('span');
         spanElement.classList.add('tocTitle');
-        spanElement.innerText = '• ' + titleElement.querySelectorAll('p')[0]?.textContent;
+        if (configManager.TocDeafultTag == 'blockquote') {
+          spanElement.innerText = '• ' + titleElement.querySelectorAll('p')[0]?.textContent;
+        }
+
+        if (configManager.TocDeafultTag == 'b') {
+          spanElement.innerText = '• ' + titleElement?.textContent;
+        }
+
         spanElement.addEventListener('click', () => clickHandler(titleElement));
 
         tocElement.appendChild(spanElement);

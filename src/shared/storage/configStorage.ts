@@ -1,6 +1,6 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storage/base';
 
-type TocDefaultTag = 'blockquote' | 'span'
+type TocDefaultTag = 'blockquote' | 'b'
 
 type ConfigStorage = BaseStorage<Config> & {
   toggle: (type: string) => Promise<void>;

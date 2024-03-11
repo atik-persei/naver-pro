@@ -37,7 +37,7 @@ const Popup = () => {
             id='toc-criterion-object'
             onChange={handleUpdateConfig}>
             <option selected={configManager.TocDeafultTag == 'blockquote' ? true : false} value='blockquote'>blockquote</option>
-            <option selected={configManager.TocDeafultTag == 'span' ? true : false} value='span'>span</option>
+            <option selected={configManager.TocDeafultTag == 'b' ? true : false} value='b'>b</option>
           </select>
         </div>
 
