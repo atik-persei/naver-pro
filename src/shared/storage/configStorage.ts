@@ -1,9 +1,10 @@
 import { BaseStorage, createStorage, StorageType } from '@src/shared/storage/base';
 
-type TocDefaultTag = 'blockquote'
+type TocDefaultTag = 'blockquote' | 'span'
 
 type ConfigStorage = BaseStorage<Config> & {
-  update: (type: string) => Promise<void>;
+  toggle: (type: string) => Promise<void>;
+  update: (type: string, value: TocDefaultTag) => Promise<void>;
 };
 
 type Config = {
@@ -19,7 +20,7 @@ const storage = createStorage<Config>('config', { Toc: true, TocDeafultTag: 'blo
 
 const configStorage: ConfigStorage = {
   ...storage,
-  update: async (type) => {
+  toggle: async (type) => {
     if (type == 'toc') {
       await storage.set((currentConfig) => ({
         ...currentConfig,
@@ -38,6 +39,14 @@ const configStorage: ConfigStorage = {
       }));
     }
   },
+  update: async (type, value) => {
+    if (type == 'toc-criterion-object') {
+      await storage.set((currentConfig) => ({
+        ...currentConfig,
+        TocDeafultTag: value,
+      }));
+    }
+  }
 };
 
 export default configStorage;

@@ -18,7 +18,7 @@ export default function App() {
   // 페이지 이동 시 구분
   useEffect(() => {
     const iframeElement = document.querySelector('#mainFrame');
-    const viwerElement  = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
+    const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
     setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
   }, []);
 
@@ -33,7 +33,7 @@ export default function App() {
     if (pageStructure == 'none') {
       return
     }
-    
+
     if (pageStructure == 'static') {
       fetchCriterionObject();
       return;
@@ -41,7 +41,7 @@ export default function App() {
 
     if (pageStructure == 'iframe') {
       document.querySelector('#mainFrame').addEventListener('load', fetchCriterionObject);
-      return;      
+      return;
     }
   }, [pageStructure])
 
@@ -67,7 +67,7 @@ export default function App() {
       iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement
       iframeContent = iframeElement.contentDocument || iframeElement.contentWindow.document
     }
-    
+
 
     // toc 제목 조회
     console.log(criterionObject)
@@ -86,9 +86,10 @@ export default function App() {
   }, [criterionObject])
 
   async function fetchCriterionObject() {
-    if (!configManager.Toc) {
-      return
-    }
+    // 목차 보여주기 여부
+    if (!configManager.Toc) { return }
+
+    // 블로그 아이디 임시 기록
     let blogID = ''
 
     setCriterionObject('loading')
@@ -120,6 +121,9 @@ export default function App() {
           // 블로그 아이디 조회
           blogID = window.location.pathname.split('/')[1];
         }
+        
+        // 블로그 아이디 저장
+        setBlogID(blogID)
 
         // 블로그 설정 데이터 유무
         const isSpecifiedBlog = criterionObjectData.result.find(criterionObject => criterionObject.url === blogID) ? true : false;
@@ -132,7 +136,7 @@ export default function App() {
 
         // 해당 블로그 설정이 없고, 전역 디폴트가 있다면 데이터 반환
         if (!isSpecifiedBlog && configManager.TocGlobalApplicationScope) {
-          setCriterionObject(criterionObjectData.default)
+          setCriterionObject({ toc: configManager.TocDeafultTag })
           return
         }
 
@@ -164,7 +168,6 @@ export default function App() {
       // head에 link 요소 추가
       iframeContent.head.insertBefore(linkElement, iframeContent.head.children[0]);
 
-      console.log('head')
       // 게시글 요소 조회
       const documentBodyElement = iframeContent.querySelector('.se-viewer') || iframeContent.querySelector('.se_component_wrap');
 
@@ -229,32 +232,30 @@ export default function App() {
     let iframeElement: HTMLIFrameElement | HTMLElement | null = null;
 
     if (pageStructure == 'static') {
-        iframeElement = document.querySelector('body') as HTMLElement;
+      iframeElement = document.querySelector('body') as HTMLElement;
     }
 
     if (pageStructure == 'iframe') {
-        iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement;
+      iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement;
     }
 
     // 클릭한 엘리먼트의 위치 정보를 가져옵니다.
     const clickedElementRect = titleElement.getBoundingClientRect();
 
     if (iframeElement instanceof HTMLIFrameElement && iframeElement.contentWindow) {
-        // iframe 내부의 document 조회
-        iframeElement.contentWindow.scrollTo({
-            top: iframeElement.contentWindow.scrollY + clickedElementRect.top - 58,
-            behavior: 'smooth',
-        });
+      // iframe 내부의 document 조회
+      iframeElement.contentWindow.scrollTo({
+        top: iframeElement.contentWindow.scrollY + clickedElementRect.top - 58,
+        behavior: 'smooth',
+      });
     } else {
-        // iframeElement가 HTMLIFrameElement가 아닌 경우 또는 contentWindow가 없는 경우
-        window.scrollTo({
-            top: window.scrollY + clickedElementRect.top - 58,
-            behavior: 'smooth',
-        });
+      // iframeElement가 HTMLIFrameElement가 아닌 경우 또는 contentWindow가 없는 경우
+      window.scrollTo({
+        top: window.scrollY + clickedElementRect.top - 58,
+        behavior: 'smooth',
+      });
     }
-}
-
-
+  }
 
   return null
 }

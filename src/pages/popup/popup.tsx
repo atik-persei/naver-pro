@@ -7,9 +7,13 @@ import useStorage from '@root/src/shared/hook/useStorage';
 const Popup = () => {
   const configManager = useStorage(configStorage);
 
-  const handleUpdateConfig = async (event) => {
-    await configStorage.update(event.target.id);
+  const handleToggleConfig = async (event) => {
+    await configStorage.toggle(event.target.id);
   };
+  const handleUpdateConfig = async (event) => {
+    await configStorage.update(event.target.id, event.target.value);
+  }
+
 
   return (
     <div className='App'>
@@ -32,7 +36,8 @@ const Popup = () => {
           <select
             id='toc-criterion-object'
             onChange={handleUpdateConfig}>
-            <option defaultChecked={true} value='blockquote'>blockquote</option>
+            <option selected={configManager.TocDeafultTag == 'blockquote' ? true : false} value='blockquote'>blockquote</option>
+            <option selected={configManager.TocDeafultTag == 'span' ? true : false} value='span'>span</option>
           </select>
         </div>
 
@@ -43,7 +48,7 @@ const Popup = () => {
             id='toc'
             type='checkbox'
             checked={configManager.Toc}
-            onChange={handleUpdateConfig}>
+            onChange={handleToggleConfig}>
             </input>
             <label htmlFor='toc'>블로그 목차 보여주기</label>
         </div>
@@ -53,7 +58,7 @@ const Popup = () => {
             id='toc-global-application-scope'
             type='checkbox'
             checked={configManager.TocGlobalApplicationScope}
-            onChange={handleUpdateConfig}
+            onChange={handleToggleConfig}
             disabled={configManager.Toc ? false : true}>
             </input>
             <label htmlFor='toc-global-application-scope'>지정되지 않는 블로그 목차 보여주기</label>
