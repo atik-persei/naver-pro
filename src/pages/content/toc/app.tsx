@@ -210,12 +210,15 @@ export default function App() {
       titleElements.map((titleElement) => {
         const spanElement = document.createElement('span');
         spanElement.classList.add('tocTitle');
+
         if (configManager.TocDeafultTag == 'blockquote') {
-          spanElement.innerText = '• ' + titleElement.querySelectorAll('p')[0]?.textContent;
+          console.log(replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent))
+          spanElement.innerText = '• ' + replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent);
         }
 
         if (configManager.TocDeafultTag == 'b') {
-          spanElement.innerText = '• ' + titleElement?.textContent;
+          console.log(replaceTitle(titleElement?.textContent))
+          spanElement.innerText = '• ' + replaceTitle(titleElement?.textContent);
         }
 
         spanElement.addEventListener('click', () => clickHandler(titleElement));
@@ -262,6 +265,11 @@ export default function App() {
         behavior: 'smooth',
       });
     }
+  }
+
+  function replaceTitle(text) {
+    const replaceText = text.trim().replaceAll('                                ', '').replaceAll('\n', ' ')
+    return replaceText;
   }
 
   return null
