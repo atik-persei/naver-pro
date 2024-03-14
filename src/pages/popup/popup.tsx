@@ -14,6 +14,12 @@ const Popup = () => {
     await configStorage.update(event.target.id, event.target.value);
   }
 
+  const [showConfigWindow, setShowConfigWindow] = useState(false)
+
+  const configAction = (event) => {
+    setShowConfigWindow(!showConfigWindow)
+  }
+
 
   return (
     <div className='App'>
@@ -27,41 +33,55 @@ const Popup = () => {
           <a href='https://github.com/atik-persei' target='_blank'>
             <img src='/assets/image/github.svg' alt='github' />
           </a>
+
+          <a onClick={configAction}>
+            <img src='/assets/image/setting.svg' alt='github' />
+          </a>
         </div>
       </div>
 
       <div className='body'>
-        <div className='option'>
-          <label>목차 기준 값</label>
-          <select
-            id='toc-criterion-object'
-            onChange={handleUpdateConfig}>
-            <option selected={configManager.TocDeafultTag == 'blockquote' ? true : false} value='blockquote'>blockquote</option>
-            <option selected={configManager.TocDeafultTag == 'b' ? true : false} value='b'>b</option>
-          </select>
+        <div className='main-page'>
         </div>
 
-        <br />
+        <div className={`config-page ${showConfigWindow ? 'active' : 'disable'}`}>
+          <div className='option'>
+            <label>목차 기준 값</label>
+            <select
+              id='toc-criterion-object'
+              onChange={handleUpdateConfig}>
+              <option selected={configManager.TocDeafultTag == 'blockquote' ? true : false} value='blockquote'>blockquote</option>
+              <option selected={configManager.TocDeafultTag == 'b' ? true : false} value='b'>b</option>
+            </select>
+          </div>
 
-        <div className='option'>
-          <input
-            id='toc'
-            type='checkbox'
-            checked={configManager.Toc}
-            onChange={handleToggleConfig}>
+          <br />
+
+          <div className='option'>
+            <input
+              id='toc'
+              type='checkbox'
+              checked={configManager.Toc}
+              onChange={handleToggleConfig}>
             </input>
             <label htmlFor='toc'>블로그 목차 보여주기</label>
-        </div>
+          </div>
 
-        <div className='option'>
-          <input
-            id='toc-global-application-scope'
-            type='checkbox'
-            checked={configManager.TocGlobalApplicationScope}
-            onChange={handleToggleConfig}
-            disabled={configManager.Toc ? false : true}>
+          <div className='option'>
+            <input
+              id='toc-global-application-scope'
+              type='checkbox'
+              checked={configManager.TocGlobalApplicationScope}
+              onChange={handleToggleConfig}
+              disabled={configManager.Toc ? false : true}>
             </input>
             <label htmlFor='toc-global-application-scope'>지정되지 않는 블로그 목차 보여주기</label>
+          </div>
+
+          <div className='config-action'>
+            <button className='action-cancle' onClick={configAction}>취소</button>
+            <button className='action-apply' onClick={configAction}>적용</button>
+          </div>
         </div>
       </div>
     </div>
