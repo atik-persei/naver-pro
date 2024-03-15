@@ -30,7 +30,7 @@ const Popup = () => {
             <img src='/assets/image/discord.svg' alt='discord' />
           </a>
 
-          <a href='https://github.com/atik-persei' target='_blank'>
+          <a href='https://github.com/atik-persei/naver-pro' target='_blank'>
             <img src='/assets/image/github.svg' alt='github' />
           </a>
 
