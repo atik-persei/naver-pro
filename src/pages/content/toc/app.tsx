@@ -181,6 +181,7 @@ export default function App() {
       tocElement = iframeContent.querySelector('.tocElement');
     }
 
+    // 목차 데이터를 불러오는 과정
     if (criterionObject == 'loading') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -189,6 +190,7 @@ export default function App() {
       return
     }
 
+    // 지정된 블로그가 아닌 경우
     if (criterionObject == 'none') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -197,6 +199,7 @@ export default function App() {
       return
     }
 
+    // API 업데이트로 인한 동작이 불가능 한 경우
     if (criterionObject == 'update') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -205,7 +208,7 @@ export default function App() {
       return
     }
 
-
+    // 조회된 목차 데이터가 있을 경우
     if (titleElements.length > 0) {
       titleElements.map((titleElement) => {
         const spanElement = document.createElement('span');
@@ -229,6 +232,7 @@ export default function App() {
       return
     }
 
+    // 조회된 목차 데이터가 없을 경우
     if (titleElements.length == 0) {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');

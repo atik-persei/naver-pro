@@ -7,18 +7,23 @@ import useStorage from '@root/src/shared/hook/useStorage';
 const Popup = () => {
   const configManager = useStorage(configStorage);
 
+  // 토글형 설정 데이터 변경
   const handleToggleConfig = async (event) => {
     await configStorage.toggle(event.target.id);
   };
+
+  // 문자열 설정 데이터 변경
   const handleUpdateConfig = async (event) => {
     await configStorage.update(event.target.id, event.target.value);
-  }
+  };
 
-  const [showConfigWindow, setShowConfigWindow] = useState(false)
+  // 설정창 표시 여부
+  const [showConfigWindow, setShowConfigWindow] = useState(false);
 
+  // 설정창 표시 동작
   const configAction = (event) => {
-    setShowConfigWindow(!showConfigWindow)
-  }
+    setShowConfigWindow(!showConfigWindow);
+  };
 
 
   return (
@@ -42,6 +47,7 @@ const Popup = () => {
 
       <div className='body'>
         <div className='main-page'>
+          
         </div>
 
         <div className={`config-page ${showConfigWindow ? 'active' : 'disable'}`}>
