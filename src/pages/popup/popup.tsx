@@ -25,7 +25,6 @@ const Popup = () => {
     setShowConfigWindow(!showConfigWindow);
   };
 
-
   return (
     <div className='App'>
       <div className='header'>
@@ -47,7 +46,12 @@ const Popup = () => {
 
       <div className='body'>
         <div className='main-page'>
-          
+          <span className='feature-title'>새로운 기능</span>
+          <div className='feature'>
+            <span>v0.0.2</span>
+            <span>- 목차를 보여줄 태그 설정 기능 추가</span>
+            <span>- 다른 페이지 접속 시 목차 안나오는 버그 수정</span>
+          </div>
         </div>
 
         <div className={`config-page ${showConfigWindow ? 'active' : 'disable'}`}>

@@ -32,9 +32,11 @@ html {
     width: 280px;
 
     padding: 10px;
+    background-color: #FFFFFF;
 }
 
 .main-page {
+    font-size: 1.2rem;
 }
 
 .config-page {
@@ -42,6 +44,16 @@ html {
     top: 40px;
     left: calc(300px + 300px);
     transition: all 0.1s;
+}
+
+.feature-title {
+    font-weight: bold;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
 }
 
 .active {
