@@ -24,7 +24,40 @@ html {
 }
 
 .body {
+    overflow: hidden;
+}
+
+[class*='-page'] {
+    height: 100px;
+    width: 280px;
+
     padding: 10px;
+    background-color: #FFFFFF;
+}
+
+.main-page {
+    font-size: 1.2rem;
+}
+
+.config-page {
+    position: fixed;
+    top: 40px;
+    left: calc(300px + 300px);
+    transition: all 0.1s;
+}
+
+.feature-title {
+    font-weight: bold;
+}
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.active {
+    left: 0;
 }
 
 .option {
@@ -34,6 +67,24 @@ html {
     font-size: 1.2rem;
 }
 
+.config-action {
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.config-action button {
+    height: 24px;
+    width: 100px;
+
+    border: none;
+}
+.action-cancle {
+    background-color: #D8D8D8;
+}
+.action-apply {
+    background-color: #03C75A;
+}
 
 .icon {
     display: flex;

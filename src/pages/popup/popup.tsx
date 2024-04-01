@@ -7,8 +7,22 @@ import useStorage from '@root/src/shared/hook/useStorage';
 const Popup = () => {
   const configManager = useStorage(configStorage);
 
+  // 토글형 설정 데이터 변경
+  const handleToggleConfig = async (event) => {
+    await configStorage.toggle(event.target.id);
+  };
+
+  // 문자열 설정 데이터 변경
   const handleUpdateConfig = async (event) => {
-    await configStorage.toggle(event.target.id)
+    await configStorage.update(event.target.id, event.target.value);
+  };
+
+  // 설정창 표시 여부
+  const [showConfigWindow, setShowConfigWindow] = useState(false);
+
+  // 설정창 표시 동작
+  const configAction = (event) => {
+    setShowConfigWindow(!showConfigWindow);
   };
 
   return (
@@ -20,32 +34,64 @@ const Popup = () => {
             <img src='/assets/image/discord.svg' alt='discord' />
           </a>
 
-          <a href='https://github.com/atik-persei' target='_blank'>
+          <a href='https://github.com/atik-persei/naver-pro' target='_blank'>
             <img src='/assets/image/github.svg' alt='github' />
+          </a>
+
+          <a onClick={configAction}>
+            <img src='/assets/image/setting.svg' alt='github' />
           </a>
         </div>
       </div>
 
       <div className='body'>
-        <div className='option'>
-          <input
-            id='toc'
-            type='checkbox'
-            checked={configManager.Toc}
-            onChange={handleUpdateConfig}>
-            </input>
-            <label htmlFor='toc'>블로그 목차 보여주기</label>
+        <div className='main-page'>
+          <span className='feature-title'>새로운 기능</span>
+          <div className='feature'>
+            <span>v0.0.2</span>
+            <span>- 목차를 보여줄 태그 설정 기능 추가</span>
+            <span>- 다른 페이지 접속 시 목차 안나오는 버그 수정</span>
+          </div>
         </div>
 
-        <div className='option'>
-          <input
-            id='toc-global-application-scope'
-            type='checkbox'
-            checked={configManager.TocGlobalApplicationScope}
-            onChange={handleUpdateConfig}
-            disabled={configManager.Toc ? false : true}>
+        <div className={`config-page ${showConfigWindow ? 'active' : 'disable'}`}>
+          <div className='option'>
+            <label>목차 기준 값</label>
+            <select
+              id='toc-criterion-object'
+              onChange={handleUpdateConfig}>
+              <option selected={configManager.TocDeafultTag == 'blockquote' ? true : false} value='blockquote'>blockquote</option>
+              <option selected={configManager.TocDeafultTag == 'b' ? true : false} value='b'>b</option>
+            </select>
+          </div>
+
+          <br />
+
+          <div className='option'>
+            <input
+              id='toc'
+              type='checkbox'
+              checked={configManager.Toc}
+              onChange={handleToggleConfig}>
+            </input>
+            <label htmlFor='toc'>블로그 목차 보여주기</label>
+          </div>
+
+          <div className='option'>
+            <input
+              id='toc-global-application-scope'
+              type='checkbox'
+              checked={configManager.TocGlobalApplicationScope}
+              onChange={handleToggleConfig}
+              disabled={configManager.Toc ? false : true}>
             </input>
             <label htmlFor='toc-global-application-scope'>지정되지 않는 블로그 목차 보여주기</label>
+          </div>
+
+          <div className='config-action'>
+            <button className='action-cancle' onClick={configAction}>취소</button>
+            <button className='action-apply' onClick={configAction}>적용</button>
+          </div>
         </div>
       </div>
     </div>

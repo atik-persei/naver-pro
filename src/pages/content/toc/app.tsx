@@ -18,7 +18,7 @@ export default function App() {
   // 페이지 이동 시 구분
   useEffect(() => {
     const iframeElement = document.querySelector('#mainFrame');
-    const viwerElement  = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
+    const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
     setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
   }, []);
 
@@ -33,7 +33,7 @@ export default function App() {
     if (pageStructure == 'none') {
       return
     }
-    
+
     if (pageStructure == 'static') {
       fetchCriterionObject();
       return;
@@ -41,7 +41,7 @@ export default function App() {
 
     if (pageStructure == 'iframe') {
       document.querySelector('#mainFrame').addEventListener('load', fetchCriterionObject);
-      return;      
+      return;
     }
   }, [pageStructure])
 
@@ -67,7 +67,7 @@ export default function App() {
       iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement
       iframeContent = iframeElement.contentDocument || iframeElement.contentWindow.document
     }
-    
+
 
     // toc 제목 조회
     console.log(criterionObject)
@@ -78,7 +78,7 @@ export default function App() {
 
       // 정규 표현식을 사용하여 단어 사이의 공백만 제거하고 길이를 계산
       const textWithoutExtraSpaces = element?.textContent.replace(' ', '').trim();
-      return textWithoutExtraSpaces.length <= 200;
+      return textWithoutExtraSpaces.length > 0 && textWithoutExtraSpaces.length <= 200 && textWithoutExtraSpaces != '​';
     });
 
     // toc 업데이트
@@ -86,13 +86,15 @@ export default function App() {
   }, [criterionObject])
 
   async function fetchCriterionObject() {
-    if (!configManager.Toc) {
-      return
-    }
+    // 목차 보여주기 여부
+    if (!configManager.Toc) { return }
+
+    // 블로그 아이디 임시 기록
+    let blogID = ''
 
     setCriterionObject('loading')
     return new Promise((resolve, reject) => {
-      chrome.runtime.sendMessage({ action: 'getCriterionObject' }, function (response) {
+      chrome.runtime.sendMessage({ action: 'getCriterionObject' }, async function (response) {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
           return;
@@ -112,13 +114,18 @@ export default function App() {
           const urlParams = new URLSearchParams(window.location.search);
 
           // 블로그 아이디 조회
-          setBlogID(urlParams.get('blogId'));
+          blogID = urlParams.get('blogId');
         }
 
         if (pageStructure == 'iframe') {
-          setBlogID(window.location.pathname.split('/')[1]);
+          // 블로그 아이디 조회
+          blogID = window.location.pathname.split('/')[1];
         }
 
+        // 블로그 아이디 저장
+        setBlogID(blogID)
+
+        // 블로그 설정 데이터 유무
         const isSpecifiedBlog = criterionObjectData.result.find(criterionObject => criterionObject.url === blogID) ? true : false;
 
         // 해당 블로그 설정이 있다면 데이터 반환
@@ -129,7 +136,7 @@ export default function App() {
 
         // 해당 블로그 설정이 없고, 전역 디폴트가 있다면 데이터 반환
         if (!isSpecifiedBlog && configManager.TocGlobalApplicationScope) {
-          setCriterionObject(criterionObjectData.default)
+          setCriterionObject({ toc: configManager.TocDeafultTag })
           return
         }
 
@@ -161,7 +168,6 @@ export default function App() {
       // head에 link 요소 추가
       iframeContent.head.insertBefore(linkElement, iframeContent.head.children[0]);
 
-      console.log('head')
       // 게시글 요소 조회
       const documentBodyElement = iframeContent.querySelector('.se-viewer') || iframeContent.querySelector('.se_component_wrap');
 
@@ -175,6 +181,7 @@ export default function App() {
       tocElement = iframeContent.querySelector('.tocElement');
     }
 
+    // 목차 데이터를 불러오는 과정
     if (criterionObject == 'loading') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -183,6 +190,7 @@ export default function App() {
       return
     }
 
+    // 지정된 블로그가 아닌 경우
     if (criterionObject == 'none') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -191,6 +199,7 @@ export default function App() {
       return
     }
 
+    // API 업데이트로 인한 동작이 불가능 한 경우
     if (criterionObject == 'update') {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -199,12 +208,22 @@ export default function App() {
       return
     }
 
-
+    // 조회된 목차 데이터가 있을 경우
     if (titleElements.length > 0) {
       titleElements.map((titleElement) => {
         const spanElement = document.createElement('span');
         spanElement.classList.add('tocTitle');
-        spanElement.innerText = '• ' + titleElement.querySelectorAll('p')[0]?.textContent;
+
+        if (configManager.TocDeafultTag == 'blockquote') {
+          console.log(replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent))
+          spanElement.innerText = '• ' + replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent);
+        }
+
+        if (configManager.TocDeafultTag == 'b') {
+          console.log(replaceTitle(titleElement?.textContent))
+          spanElement.innerText = '• ' + replaceTitle(titleElement?.textContent);
+        }
+
         spanElement.addEventListener('click', () => clickHandler(titleElement));
 
         tocElement.appendChild(spanElement);
@@ -213,6 +232,7 @@ export default function App() {
       return
     }
 
+    // 조회된 목차 데이터가 없을 경우
     if (titleElements.length == 0) {
       const spanElement = document.createElement('p');
       spanElement.classList.add('tocTitle');
@@ -226,32 +246,35 @@ export default function App() {
     let iframeElement: HTMLIFrameElement | HTMLElement | null = null;
 
     if (pageStructure == 'static') {
-        iframeElement = document.querySelector('body') as HTMLElement;
+      iframeElement = document.querySelector('body') as HTMLElement;
     }
 
     if (pageStructure == 'iframe') {
-        iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement;
+      iframeElement = document.querySelector('#mainFrame') as HTMLIFrameElement;
     }
 
     // 클릭한 엘리먼트의 위치 정보를 가져옵니다.
     const clickedElementRect = titleElement.getBoundingClientRect();
 
     if (iframeElement instanceof HTMLIFrameElement && iframeElement.contentWindow) {
-        // iframe 내부의 document 조회
-        iframeElement.contentWindow.scrollTo({
-            top: iframeElement.contentWindow.scrollY + clickedElementRect.top - 58,
-            behavior: 'smooth',
-        });
+      // iframe 내부의 document 조회
+      iframeElement.contentWindow.scrollTo({
+        top: iframeElement.contentWindow.scrollY + clickedElementRect.top - 58,
+        behavior: 'smooth',
+      });
     } else {
-        // iframeElement가 HTMLIFrameElement가 아닌 경우 또는 contentWindow가 없는 경우
-        window.scrollTo({
-            top: window.scrollY + clickedElementRect.top - 58,
-            behavior: 'smooth',
-        });
+      // iframeElement가 HTMLIFrameElement가 아닌 경우 또는 contentWindow가 없는 경우
+      window.scrollTo({
+        top: window.scrollY + clickedElementRect.top - 58,
+        behavior: 'smooth',
+      });
     }
-}
+  }
 
-
+  function replaceTitle(text) {
+    const replaceText = text.trim().replaceAll('                                ', '').replaceAll('\n', ' ')
+    return replaceText;
+  }
 
   return null
 }
