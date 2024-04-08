@@ -15,7 +15,7 @@ const manifest = {
   name: '__MSG_extensionName__',
   version: packageJson.version,
   description: '__MSG_extensionDescription__',
-  permissions: ['storage'],
+  permissions: ['storage', 'tabs'],
   action: {
     default_popup: 'src/pages/popup/index.html',
     default_icon: 'icon-128.png',
