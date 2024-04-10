@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useStorage from '@root/src/shared/hook/useStorage';
 import configStorage from '@root/src/shared/storage/configStorage';
 
-type PageStructure = null | 'iframe' | 'static' | 'none';
+type PageStructure = null | 'iframe' | 'static' | 'restore' | 'none';
 
 export default function App() {
   // 설정 데이터 구성
@@ -17,6 +17,11 @@ export default function App() {
 
   // 페이지 이동 시 구분
   useEffect(() => {
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      setPageStructure('restore')
+      console.log(message.message);
+    });
+
     const iframeElement = document.querySelector('#mainFrame');
     const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
     setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
@@ -34,13 +39,31 @@ export default function App() {
       return
     }
 
+    if (pageStructure == 'restore') {
+      const iframeElement = document.querySelector('#mainFrame');
+      const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
+      setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
+      return
+    }
+
     if (pageStructure == 'static') {
       fetchCriterionObject();
       return;
     }
 
     if (pageStructure == 'iframe') {
+      // 페이지 이동 시 감지
       document.querySelector('#mainFrame').addEventListener('load', fetchCriterionObject);
+
+      // 페이지 복구 시 감지
+      const intervalId = setInterval(() => {
+        // 특정 조건을 만족하면 setInterval 종료
+        const mainFrame = document.querySelector('#mainFrame') as HTMLIFrameElement
+        if (mainFrame.contentWindow.document.readyState === 'complete') {
+          fetchCriterionObject()
+          clearInterval(intervalId)
+        } 
+      }, 1000);
       return;
     }
   }, [pageStructure])
@@ -215,12 +238,12 @@ export default function App() {
         spanElement.classList.add('tocTitle');
 
         if (configManager.TocDeafultTag == 'blockquote') {
-          console.log(replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent))
+          // console.log(replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent))
           spanElement.innerText = '• ' + replaceTitle(titleElement.querySelectorAll('p')[0]?.textContent);
         }
 
         if (configManager.TocDeafultTag == 'b') {
-          console.log(replaceTitle(titleElement?.textContent))
+          // console.log(replaceTitle(titleElement?.textContent))
           spanElement.innerText = '• ' + replaceTitle(titleElement?.textContent);
         }
 
