@@ -4,19 +4,6 @@ import 'webextension-polyfill';
 reloadOnUpdate('pages/background');
 reloadOnUpdate('pages/content/style.scss');
 
-
-chrome.tabs.onCreated.addListener((tab) => {
-  // 새로운 탭이 생성될 때
-  chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo, updatedTab) {
-    if (tabId === tab.id && changeInfo.status === 'complete') {
-      // 해당 탭의 로딩이 완료되었을 때
-      chrome.tabs.sendMessage(tabId, { message: 'hello' });
-      // 이벤트 리스너를 제거합니다.
-      chrome.tabs.onUpdated.removeListener(listener);
-    }
-  });
-});
-
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.action === 'getCriterionObject') {

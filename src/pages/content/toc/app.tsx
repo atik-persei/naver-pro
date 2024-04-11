@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useStorage from '@root/src/shared/hook/useStorage';
 import configStorage from '@root/src/shared/storage/configStorage';
 
-type PageStructure = null | 'iframe' | 'static' | 'restore' | 'none';
+type PageStructure = null | 'iframe' | 'static' | 'none';
 
 export default function App() {
   // 설정 데이터 구성
@@ -12,16 +12,11 @@ export default function App() {
   const [criterionObject, setCriterionObject] = useState(null);
 
   // 페이지 형태 분류
-  const [pageStructure, setPageStructure] = useState<PageStructure>(null)
-  const [blogID, setBlogID] = useState(null)
+  const [pageStructure, setPageStructure] = useState<PageStructure>(null);
+  const [blogID, setBlogID] = useState(null);
 
   // 페이지 이동 시 구분
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-      setPageStructure('restore')
-      console.log(message.message);
-    });
-
     const iframeElement = document.querySelector('#mainFrame');
     const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
     setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
@@ -39,29 +34,25 @@ export default function App() {
       return
     }
 
-    if (pageStructure == 'restore') {
-      const iframeElement = document.querySelector('#mainFrame');
-      const viwerElement = document.querySelector('.se-viewer') || document.querySelector('.se_component_wrap');
-      setPageStructure(iframeElement ? 'iframe' : viwerElement ? 'static' : 'none');
-      return
-    }
-
     if (pageStructure == 'static') {
       fetchCriterionObject();
       return;
     }
 
     if (pageStructure == 'iframe') {
-      // 페이지 이동 시 감지
-      document.querySelector('#mainFrame').addEventListener('load', fetchCriterionObject);
-
-      // 페이지 복구 시 감지
       const intervalId = setInterval(() => {
         // 특정 조건을 만족하면 setInterval 종료
         const mainFrame = document.querySelector('#mainFrame') as HTMLIFrameElement
+        // 페이지 이동 시 감지
+        document.querySelector('#mainFrame').addEventListener('load', () => {
+          fetchCriterionObject();
+          clearInterval(intervalId);
+        });
+
+        // 페이지 복구 시 감지
         if (mainFrame.contentWindow.document.readyState === 'complete') {
-          fetchCriterionObject()
-          clearInterval(intervalId)
+          fetchCriterionObject();
+          clearInterval(intervalId);
         } 
       }, 1000);
       return;
@@ -116,6 +107,7 @@ export default function App() {
     let blogID = ''
 
     setCriterionObject('loading')
+
     return new Promise((resolve, reject) => {
       chrome.runtime.sendMessage({ action: 'getCriterionObject' }, async function (response) {
         if (chrome.runtime.lastError) {
