@@ -48,9 +48,9 @@ const Popup = () => {
         <div className='main-page'>
           <span className='feature-title'>새로운 기능</span>
           <div className='feature'>
-            <span>v0.0.2</span>
-            <span>- 목차를 보여줄 태그 설정 기능 추가</span>
-            <span>- 다른 페이지 접속 시 목차 안나오는 버그 수정</span>
+            <span>v0.0.4</span>
+            <span>- 탭 복구 시 목차 재생성 기능 추가</span>
+            <span>- 잘못 설정된 권한 수정</span>
           </div>
         </div>
 
